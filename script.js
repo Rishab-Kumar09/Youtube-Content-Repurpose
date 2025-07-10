@@ -1,6 +1,7 @@
 // Configuration
 const CONFIG = {
-    webhookUrl: 'https://n8n-gauntlethq-u50028.vm.elestio.app/webhook-test/78797ede-a5e7-4ae9-8f7d-326f5260c135',
+    // Use Netlify Function proxy instead of direct n8n webhook (bypasses CORS)
+    webhookUrl: '/.netlify/functions/webhook-proxy',
     maxRetries: 3,
     retryDelay: 2000,
     processingTime: 30000 // 30 seconds estimated processing time
@@ -144,15 +145,16 @@ async function processContent(youtubeUrl) {
 
 async function sendToWebhook(youtubeUrl) {
     try {
-        // Use GET with query parameters to avoid CORS preflight
-        const url = new URL(CONFIG.webhookUrl);
-        url.searchParams.append('URL', youtubeUrl);
-        
-        const response = await fetch(url.toString(), {
-            method: 'GET',
+        // Use POST to Netlify Function proxy (handles CORS properly)
+        const response = await fetch(CONFIG.webhookUrl, {
+            method: 'POST',
             headers: {
+                'Content-Type': 'application/json',
                 'Accept': 'application/json'
-            }
+            },
+            body: JSON.stringify({
+                URL: youtubeUrl
+            })
         });
         
         if (!response.ok) {
