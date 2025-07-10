@@ -145,16 +145,13 @@ async function processContent(youtubeUrl) {
 
 async function sendToWebhook(youtubeUrl) {
     try {
-        // Use POST to Netlify Function proxy (handles CORS properly)
-        const response = await fetch(CONFIG.webhookUrl, {
-            method: 'POST',
+        // Use GET request with URL parameter
+        const url = `${CONFIG.webhookUrl}?URL=${encodeURIComponent(youtubeUrl)}`;
+        const response = await fetch(url, {
+            method: 'GET',
             headers: {
-                'Content-Type': 'application/json',
                 'Accept': 'application/json'
-            },
-            body: JSON.stringify({
-                URL: youtubeUrl
-            })
+            }
         });
         
         if (!response.ok) {
