@@ -1,3 +1,7 @@
+const https = require('https');
+const http = require('http');
+const { URL } = require('url');
+
 exports.handler = async (event, context) => {
   // Set CORS headers to allow requests from the frontend
   const headers = {
@@ -51,45 +55,70 @@ exports.handler = async (event, context) => {
       };
     }
 
-    // n8n webhook URL
+    // n8n webhook URL with parameter
     const n8nWebhookUrl = 'https://n8n-gauntlethq-u50028.vm.elestio.app/webhook/78797ede-a5e7-4ae9-8f7d-326f5260c135';
-
-    console.log('Proxying request to n8n webhook:', n8nWebhookUrl);
-    console.log('YouTube URL:', youtubeUrl);
-
-    // Make request to n8n webhook with URL query parameter (server-to-server, no CORS issues)
     const n8nUrl = new URL(n8nWebhookUrl);
     n8nUrl.searchParams.append('URL', youtubeUrl);
-    
-    const response = await fetch(n8nUrl.toString(), {
-      method: 'GET',
-      headers: {
-        'Accept': 'application/json',
-        'User-Agent': 'YouTube-Content-Repurpose-Proxy/1.0'
-      }
+
+    console.log('Proxying request to n8n webhook:', n8nUrl.toString());
+    console.log('YouTube URL:', youtubeUrl);
+
+    // Make HTTP request using Node.js built-in modules
+    const response = await new Promise((resolve, reject) => {
+      const urlObj = new URL(n8nUrl.toString());
+      const options = {
+        hostname: urlObj.hostname,
+        port: urlObj.port || 443,
+        path: urlObj.pathname + urlObj.search,
+        method: 'GET',
+        headers: {
+          'Accept': 'application/json',
+          'User-Agent': 'YouTube-Content-Repurpose-Proxy/1.0'
+        }
+      };
+
+      const request = https.request(options, (res) => {
+        let data = '';
+        
+        res.on('data', (chunk) => {
+          data += chunk;
+        });
+        
+        res.on('end', () => {
+          resolve({
+            statusCode: res.statusCode,
+            headers: res.headers,
+            body: data
+          });
+        });
+      });
+
+      request.on('error', (error) => {
+        reject(error);
+      });
+
+      request.end();
     });
 
-    console.log('n8n response status:', response.status);
+    console.log('n8n response status:', response.statusCode);
+    console.log('n8n response body:', response.body);
 
+    // Parse response
     let responseData;
-    const contentType = response.headers.get('content-type');
-    
-    if (contentType && contentType.includes('application/json')) {
-      responseData = await response.json();
-    } else {
-      responseData = await response.text();
+    try {
+      responseData = JSON.parse(response.body);
+    } catch (e) {
+      responseData = response.body;
     }
 
-    console.log('n8n response data:', responseData);
-
-    if (!response.ok) {
+    if (response.statusCode !== 200) {
       return {
-        statusCode: response.status,
+        statusCode: response.statusCode,
         headers,
         body: JSON.stringify({
-          error: `n8n webhook error: ${response.status}`,
+          error: `n8n webhook error: ${response.statusCode}`,
           message: responseData,
-          webhookStatus: response.status
+          webhookStatus: response.statusCode
         })
       };
     }
@@ -116,6 +145,7 @@ exports.handler = async (event, context) => {
       body: JSON.stringify({
         error: 'Internal server error',
         message: error.message,
+        stack: error.stack,
         details: 'Failed to connect to n8n webhook'
       })
     };
