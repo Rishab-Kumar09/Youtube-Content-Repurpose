@@ -9,8 +9,27 @@ document.getElementById('repurpose-form').addEventListener('submit', async (e) =
   // Show status container and update message
   statusContainer.classList.remove('hidden');
   status.textContent = 'Processing your video...';
-  
+
+  // Validate and format YouTube URL
+  let formattedUrl = url;
   try {
+    // Convert youtu.be URLs to full youtube.com URLs
+    if (url.includes('youtu.be/')) {
+      const videoId = url.split('youtu.be/')[1].split(/[#?]/)[0];
+      formattedUrl = `https://www.youtube.com/watch?v=${videoId}`;
+    }
+    // Ensure www. is present
+    if (url.includes('youtube.com') && !url.includes('www.')) {
+      formattedUrl = url.replace('youtube.com', 'www.youtube.com');
+    }
+    // Ensure https:// is present
+    if (!formattedUrl.startsWith('http')) {
+      formattedUrl = 'https://' + formattedUrl;
+    }
+
+    console.log('Original URL:', url);
+    console.log('Formatted URL:', formattedUrl);
+    
     // Construct the request options
     const requestOptions = {
       method: 'POST',
@@ -21,7 +40,7 @@ document.getElementById('repurpose-form').addEventListener('submit', async (e) =
       body: JSON.stringify({
         item: {
           json: {
-            URL: url
+            URL: formattedUrl
           }
         }
       })
