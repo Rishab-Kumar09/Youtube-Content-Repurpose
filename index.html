@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>YouTube Content Repurpose - Social Media Automation</title>
+    <meta name="description" content="Transform your YouTube content into engaging social media posts across multiple platforms instantly.">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🎬</text></svg>">
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <div class="logo">
+                <i class="fab fa-youtube"></i>
+                <h1>Content Repurpose</h1>
+            </div>
+            <p class="subtitle">Transform your YouTube content into engaging social media posts</p>
+        </header>
+
+        <main class="main-content">
+            <div class="form-container">
+                <form id="repurpose-form" class="repurpose-form">
+                    <div class="input-group">
+                        <label for="youtube-url" class="input-label">
+                            <i class="fab fa-youtube"></i>
+                            YouTube URL
+                        </label>
+                        <input 
+                            type="url" 
+                            id="youtube-url" 
+                            name="youtube-url" 
+                            class="url-input" 
+                            placeholder="https://youtube.com/watch?v=..." 
+                            required
+                        >
+                        <div class="input-hint">
+                            Paste any YouTube video URL to get started
+                        </div>
+                    </div>
+
+                    <button type="submit" class="submit-btn" id="submit-btn">
+                        <i class="fas fa-magic"></i>
+                        <span>Repurpose Content</span>
+                    </button>
+                </form>
+
+                <div id="status-container" class="status-container hidden">
+                    <div id="status-message" class="status-message"></div>
+                    <div id="progress-bar" class="progress-bar">
+                        <div class="progress-fill"></div>
+                    </div>
+                </div>
+
+                <div id="result-container" class="result-container hidden">
+                    <div class="result-header">
+                        <i class="fas fa-check-circle"></i>
+                        <h3>Content Processing Complete!</h3>
+                    </div>
+                    <div class="result-content">
+                        <p>Your YouTube content has been successfully repurposed and distributed across social media platforms.</p>
+                        <div class="social-platforms">
+                            <div class="platform">
+                                <i class="fab fa-twitter"></i>
+                                <span>Twitter</span>
+                            </div>
+                            <div class="platform">
+                                <i class="fab fa-facebook"></i>
+                                <span>Facebook</span>
+                            </div>
+                            <div class="platform">
+                                <i class="fab fa-instagram"></i>
+                                <span>Instagram</span>
+                            </div>
+                            <div class="platform">
+                                <i class="fab fa-linkedin"></i>
+                                <span>LinkedIn</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="features-section">
+                <h2>How It Works</h2>
+                <div class="features-grid">
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-link"></i>
+                        </div>
+                        <h3>1. Paste URL</h3>
+                        <p>Simply paste your YouTube video URL into the form above</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-robot"></i>
+                        </div>
+                        <h3>2. AI Processing</h3>
+                        <p>Our AI analyzes and repurposes your content for different platforms</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-share-alt"></i>
+                        </div>
+                        <h3>3. Auto-Post</h3>
+                        <p>Content is automatically posted to your connected social media accounts</p>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <footer class="footer">
+            <p>&copy; 2024 Content Repurpose. Made with <i class="fas fa-heart"></i> for content creators.</p>
+        </footer>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html> 

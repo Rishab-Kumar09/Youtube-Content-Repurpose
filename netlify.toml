@@ -1,0 +1,74 @@
+[build]
+  # Build command - not needed for static HTML/CSS/JS
+  command = "echo 'No build process needed for static site'"
+  
+  # Directory to publish
+  publish = "."
+  
+  # Build environment variables
+  [build.environment]
+    NODE_VERSION = "18"
+
+# Headers for security and performance
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Frame-Options = "DENY"
+    X-Content-Type-Options = "nosniff"
+    X-XSS-Protection = "1; mode=block"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    Permissions-Policy = "camera=(), microphone=(), geolocation=()"
+    Content-Security-Policy = "default-src 'self'; script-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com; font-src 'self' https://fonts.gstatic.com https://cdnjs.cloudflare.com; img-src 'self' data: https:; connect-src 'self' https://n8n-gauntlethq-u50028.vm.elestio.app;"
+
+# Cache static assets
+[[headers]]
+  for = "/styles.css"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+  for = "/script.js"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+# Redirect rules for SPA behavior
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
+  conditions = {Role = ["admin"]}
+
+# Form processing (if needed in the future)
+[build.processing]
+  skip_processing = false
+  
+[build.processing.css]
+  bundle = false
+  minify = true
+  
+[build.processing.js]
+  bundle = false
+  minify = true
+  
+[build.processing.html]
+  pretty_urls = true
+  
+[build.processing.images]
+  compress = true
+
+# Environment-specific settings
+[context.production]
+  command = "echo 'Production build'"
+  
+[context.deploy-preview]
+  command = "echo 'Deploy preview build'"
+  
+[context.branch-deploy]
+  command = "echo 'Branch deploy build'"
+
+# Plugin configuration
+[[plugins]]
+  package = "netlify-plugin-lighthouse"
+  
+  [plugins.inputs]
+    output_path = "reports/lighthouse.html" 

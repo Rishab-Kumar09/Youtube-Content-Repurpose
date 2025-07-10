@@ -1,0 +1,49 @@
+{
+  "name": "youtube-content-repurpose",
+  "version": "1.0.0",
+  "description": "A modern web application that transforms YouTube content into engaging social media posts across multiple platforms using n8n automation",
+  "main": "index.html",
+  "scripts": {
+    "start": "python -m http.server 8000",
+    "dev": "python -m http.server 8000",
+    "build": "echo 'No build process needed for static site'",
+    "test": "echo 'No tests configured'",
+    "lint": "echo 'No linting configured'",
+    "deploy": "echo 'Deploy to Netlify via Git push'"
+  },
+  "keywords": [
+    "youtube",
+    "content",
+    "repurpose",
+    "social-media",
+    "automation",
+    "n8n",
+    "webhook",
+    "content-marketing",
+    "social-media-automation"
+  ],
+  "author": {
+    "name": "Rishab Kumar",
+    "email": "contact@rishab.com",
+    "url": "https://github.com/Rishab-Kumar09"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Rishab-Kumar09/Youtube-Content-Repurpose.git"
+  },
+  "bugs": {
+    "url": "https://github.com/Rishab-Kumar09/Youtube-Content-Repurpose/issues"
+  },
+  "homepage": "https://github.com/Rishab-Kumar09/Youtube-Content-Repurpose#readme",
+  "devDependencies": {},
+  "dependencies": {},
+  "engines": {
+    "node": ">=14.0.0"
+  },
+  "browserslist": [
+    "> 1%",
+    "last 2 versions",
+    "not dead"
+  ]
+} 

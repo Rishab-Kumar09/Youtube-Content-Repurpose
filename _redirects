@@ -1,0 +1,14 @@
+# Redirects for YouTube Content Repurpose App
+# This file is used by Netlify to handle redirects and rewrites
+
+# Force HTTPS
+http://youtube-content-repurpose.netlify.app/* https://youtube-content-repurpose.netlify.app/:splat 301!
+
+# Handle API requests (if any future API endpoints are needed)
+/api/* /netlify/functions/:splat 200
+
+# Handle form submissions (if any future forms are added)
+/submit-form /netlify/functions/submit-form 200
+
+# Fallback for single page application behavior
+/* /index.html 200 
