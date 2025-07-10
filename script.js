@@ -8,7 +8,7 @@ document.getElementById('repurpose-form').addEventListener('submit', async (e) =
   status.textContent = 'Processing...';
   
   try {
-    const response = await fetch(`/.netlify/functions/webhook-proxy?URL=${encodeURIComponent(url)}`);
+    const response = await fetch(`/.netlify/functions/webhook-proxy?URL=${url}`);
     
     if (response.ok) {
       status.textContent = 'Success! Content is being processed.';
