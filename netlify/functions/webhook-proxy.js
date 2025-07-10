@@ -52,13 +52,16 @@ exports.handler = async (event, context) => {
     }
 
     // n8n webhook URL
-    const n8nWebhookUrl = 'https://n8n-gauntlethq-u50028.vm.elestio.app/webhook-test/78797ede-a5e7-4ae9-8f7d-326f5260c135';
+    const n8nWebhookUrl = 'https://n8n-gauntlethq-u50028.vm.elestio.app/webhook/78797ede-a5e7-4ae9-8f7d-326f5260c135';
 
     console.log('Proxying request to n8n webhook:', n8nWebhookUrl);
     console.log('YouTube URL:', youtubeUrl);
 
-    // Make request to n8n webhook (server-to-server, no CORS issues)
-    const response = await fetch(n8nWebhookUrl, {
+    // Make request to n8n webhook with URL query parameter (server-to-server, no CORS issues)
+    const n8nUrl = new URL(n8nWebhookUrl);
+    n8nUrl.searchParams.append('URL', youtubeUrl);
+    
+    const response = await fetch(n8nUrl.toString(), {
       method: 'GET',
       headers: {
         'Accept': 'application/json',
