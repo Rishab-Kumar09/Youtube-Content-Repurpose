@@ -16,33 +16,21 @@ document.getElementById('repurpose-form').addEventListener('submit', async (e) =
     // Convert youtu.be URLs to full youtube.com URLs
     if (url.includes('youtu.be/')) {
       const videoId = url.split('youtu.be/')[1].split(/[#?]/)[0];
-      formattedUrl = `https://www.youtube.com/watch?v=${videoId}`;
-    }
-    // Ensure www. is present
-    if (url.includes('youtube.com') && !url.includes('www.')) {
-      formattedUrl = url.replace('youtube.com', 'www.youtube.com');
-    }
-    // Ensure https:// is present
-    if (!formattedUrl.startsWith('http')) {
-      formattedUrl = 'https://' + formattedUrl;
+      formattedUrl = `https://youtu.be/${videoId}`;  // Keep youtu.be format since it works
     }
 
     console.log('Original URL:', url);
     console.log('Formatted URL:', formattedUrl);
     
-    // Construct the request options
+    // Construct the request options with the exact format that works
     const requestOptions = {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Accept': 'application/json'
+        'Accept': '*/*'
       },
       body: JSON.stringify({
-        item: {
-          json: {
-            URL: formattedUrl
-          }
-        }
+        URL: formattedUrl
       })
     };
 
