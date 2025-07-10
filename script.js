@@ -144,15 +144,15 @@ async function processContent(youtubeUrl) {
 
 async function sendToWebhook(youtubeUrl) {
     try {
-        const response = await fetch(CONFIG.webhookUrl, {
-            method: 'POST',
+        // Use GET with query parameters to avoid CORS preflight
+        const url = new URL(CONFIG.webhookUrl);
+        url.searchParams.append('URL', youtubeUrl);
+        
+        const response = await fetch(url.toString(), {
+            method: 'GET',
             headers: {
-                'Content-Type': 'application/json',
                 'Accept': 'application/json'
-            },
-            body: JSON.stringify({
-                URL: youtubeUrl
-            })
+            }
         });
         
         if (!response.ok) {
