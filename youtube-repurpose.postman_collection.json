@@ -1,0 +1,41 @@
+{
+  "info": {
+    "name": "YouTube Content Repurpose",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Process YouTube Video",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "https://n8n-gauntlethq-u50028.vm.elestio.app/webhook/78797ede-a5e7-4ae9-8f7d-326f5260c135?item={\"json\":{\"URL\":\"{{youtubeUrl}}\"}}",
+          "protocol": "https",
+          "host": [
+            "n8n-gauntlethq-u50028",
+            "vm",
+            "elestio",
+            "app"
+          ],
+          "path": [
+            "webhook",
+            "78797ede-a5e7-4ae9-8f7d-326f5260c135"
+          ],
+          "query": [
+            {
+              "key": "item",
+              "value": "{\"json\":{\"URL\":\"{{youtubeUrl}}\"}}"
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "variable": [
+    {
+      "key": "youtubeUrl",
+      "value": "https://youtu.be/pK4EeXuR8pc"
+    }
+  ]
+} 

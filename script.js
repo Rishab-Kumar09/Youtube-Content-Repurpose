@@ -6,20 +6,10 @@ document.getElementById('repurpose-form').addEventListener('submit', async (e) =
   const status = document.getElementById('status-message');
   
   // Create the n8n webhook URL with parameters
-  const n8nUrl = new URL('https://n8n-gauntlethq-u50028.vm.elestio.app/webhook/78797ede-a5e7-4ae9-8f7d-326f5260c135');
-  const itemData = {
-    json: {
-      URL: url
-    }
-  };
-  n8nUrl.searchParams.set('item', JSON.stringify(itemData));
+  const n8nUrl = `https://n8n-gauntlethq-u50028.vm.elestio.app/webhook/78797ede-a5e7-4ae9-8f7d-326f5260c135?item={"json":{"URL":"${url}"}}`;
   
-  // Create Postman URL
-  const postmanUrl = `postman://open?url=${encodeURIComponent(n8nUrl.toString())}&method=GET`;
+  // Open Postman Web with the URL
+  window.open(`https://web.postman.co/workspace/My-Workspace/request/create?requestType=GET&requestUrl=${encodeURIComponent(n8nUrl)}`, '_blank');
   
-  // Try to open Postman
-  window.location.href = postmanUrl;
-  
-  // Show instructions
-  status.textContent = 'Opening Postman... Please send the request in Postman.';
+  status.textContent = 'Opened in Postman Web! Click "Send" to process the video.';
 }); 
