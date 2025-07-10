@@ -11,15 +11,17 @@ document.getElementById('repurpose-form').addEventListener('submit', async (e) =
   status.textContent = 'Processing your video...';
   
   try {
-    // Make POST request to n8n webhook
+    // Make POST request to n8n webhook with the exact format it expects
     const response = await fetch('https://n8n-gauntlethq-u50028.vm.elestio.app/webhook/78797ede-a5e7-4ae9-8f7d-326f5260c135', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        json: {
-          URL: url
+        item: {
+          json: {
+            URL: url
+          }
         }
       })
     });
