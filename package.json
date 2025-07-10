@@ -22,22 +22,16 @@
     "content-marketing",
     "social-media-automation"
   ],
-  "author": {
-    "name": "Rishab Kumar",
-    "email": "contact@rishab.com",
-    "url": "https://github.com/Rishab-Kumar09"
-  },
+  "author": "Rishab Kumar <contact@rishab.com> (https://github.com/Rishab-Kumar09)",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/Rishab-Kumar09/Youtube-Content-Repurpose.git"
+    "url": "git+https://github.com/Rishab-Kumar09/Youtube-Content-Repurpose.git"
   },
   "bugs": {
     "url": "https://github.com/Rishab-Kumar09/Youtube-Content-Repurpose/issues"
   },
   "homepage": "https://github.com/Rishab-Kumar09/Youtube-Content-Repurpose#readme",
-  "devDependencies": {},
-  "dependencies": {},
   "engines": {
     "node": ">=14.0.0"
   },
@@ -45,5 +39,8 @@
     "> 1%",
     "last 2 versions",
     "not dead"
-  ]
-} 
+  ],
+  "dependencies": {
+    "axios": "^1.10.0"
+  }
+}
