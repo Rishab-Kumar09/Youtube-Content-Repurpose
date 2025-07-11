@@ -5,9 +5,21 @@
   # Directory to publish
   publish = "."
   
+  # Functions directory
+  functions = "netlify/functions"
+  
   # Build environment variables
   [build.environment]
     NODE_VERSION = "18"
+
+# Function settings
+[functions]
+  # Increase function timeout to 30 seconds
+  timeout = "30s"
+  # Include external node modules
+  external_node_modules = ["node-fetch"]
+  # Directory where functions are located
+  directory = "netlify/functions"
 
 # Headers for security and performance
 [[headers]]
