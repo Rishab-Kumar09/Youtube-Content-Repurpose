@@ -52,52 +52,50 @@ document.getElementById('repurpose-form').addEventListener('submit', async (e) =
     const data = await response.json();
     console.log('Success response:', data);
     
-    status.textContent = 'Success! Your video is being processed.';
-    status.style.color = 'var(--success-color)';
+    // Get the first item from the response which contains our content
+    const content = data[0]?.fields || {};
     
-    // Show result container after success
+    // Update result container with dynamic content
     const resultContainer = document.getElementById('result-container');
+    resultContainer.innerHTML = `
+      <div class="result-header">
+        <i class="fas fa-check-circle"></i>
+        <h3>Content Processing Complete!</h3>
+      </div>
+      <div class="result-content">
+        <p>Your YouTube content has been successfully repurposed.</p>
+        <div class="platform-grid">
+          ${content.Twitter ? `
+            <button class="platform-button" onclick="showContent('twitter', ${JSON.stringify(content.Twitter)})">
+              <i class="fab fa-twitter"></i>
+              <span>Twitter</span>
+            </button>
+          ` : ''}
+          ${content.LinkedIn ? `
+            <button class="platform-button" onclick="showContent('linkedin', ${JSON.stringify(content.LinkedIn)})">
+              <i class="fab fa-linkedin"></i>
+              <span>LinkedIn</span>
+            </button>
+          ` : ''}
+          ${content.Summary ? `
+            <button class="platform-button" onclick="showContent('summary', ${JSON.stringify(content.Summary)})">
+              <i class="fas fa-file-alt"></i>
+              <span>Summary</span>
+            </button>
+          ` : ''}
+        </div>
+        <div id="content-display" class="content-display hidden">
+          <div class="content-header">
+            <span id="content-platform"></span>
+            <button onclick="hideContent()" class="close-button">
+              <i class="fas fa-times"></i>
+            </button>
+          </div>
+          <div id="content-text" class="content-text"></div>
+        </div>
+      </div>
+    `;
     resultContainer.classList.remove('hidden');
-
-    // Get the platforms container
-    const platformsContainer = document.querySelector('.social-platforms');
-    platformsContainer.innerHTML = ''; // Clear existing platforms
-
-    // Create platform buttons based on response data
-    if (data && data[0] && data[0].fields) {
-      const fields = data[0].fields;
-      
-      // Add Summary button if available
-      if (fields.Summary) {
-        addPlatformButton(platformsContainer, 'summary', '📝 Summary', fields.Summary);
-      }
-
-      // Add Twitter button if available
-      if (fields.Twitter) {
-        addPlatformButton(platformsContainer, 'twitter', '<i class="fab fa-twitter"></i> Twitter', fields.Twitter);
-      }
-
-      // Add LinkedIn button if available
-      if (fields.LinkedIn) {
-        addPlatformButton(platformsContainer, 'linkedin', '<i class="fab fa-linkedin"></i> LinkedIn', fields.LinkedIn);
-      }
-
-      // Add Gmail/Email button if available
-      if (fields.GMAIL) {
-        addPlatformButton(platformsContainer, 'gmail', '<i class="fas fa-envelope"></i> Email', fields.GMAIL);
-      }
-
-      // Add WordPress button if available
-      if (fields.Wordpress) {
-        addPlatformButton(platformsContainer, 'wordpress', '<i class="fab fa-wordpress"></i> WordPress', fields.Wordpress);
-      }
-
-      // Add Mailchimp button if available
-      if (fields.Mailchimp) {
-        addPlatformButton(platformsContainer, 'mailchimp', '<i class="fas fa-mail-bulk"></i> Mailchimp', fields.Mailchimp);
-      }
-    }
-
   } catch (error) {
     console.error('Request failed:', error);
     status.textContent = 'Error: ' + error.message;
@@ -105,35 +103,26 @@ document.getElementById('repurpose-form').addEventListener('submit', async (e) =
   }
 });
 
-// Function to add a platform button
-function addPlatformButton(container, platform, label, content) {
-  const button = document.createElement('button');
-  button.className = 'platform-button';
-  button.innerHTML = label;
-  button.onclick = () => showContent(platform, content);
-  container.appendChild(button);
-}
+// Function to show content when a platform button is clicked
+window.showContent = function(platform, content) {
+  const contentDisplay = document.getElementById('content-display');
+  const contentPlatform = document.getElementById('content-platform');
+  const contentText = document.getElementById('content-text');
+  
+  // Set platform name and icon
+  const platformIcons = {
+    twitter: 'fab fa-twitter',
+    linkedin: 'fab fa-linkedin',
+    summary: 'fas fa-file-alt'
+  };
+  
+  contentPlatform.innerHTML = `<i class="${platformIcons[platform]}"></i> ${platform.charAt(0).toUpperCase() + platform.slice(1)}`;
+  contentText.textContent = content;
+  contentDisplay.classList.remove('hidden');
+};
 
-// Function to show content in a modal
-function showContent(platform, content) {
-  // Create or get existing modal
-  let modal = document.getElementById('content-modal');
-  if (!modal) {
-    modal = document.createElement('div');
-    modal.id = 'content-modal';
-    modal.className = 'modal';
-    document.body.appendChild(modal);
-  }
-
-  // Update modal content
-  modal.innerHTML = `
-    <div class="modal-content">
-      <span class="close-button" onclick="document.getElementById('content-modal').style.display='none'">&times;</span>
-      <h2>${platform.charAt(0).toUpperCase() + platform.slice(1)} Content</h2>
-      <div class="content-display">${content}</div>
-    </div>
-  `;
-
-  // Show modal
-  modal.style.display = 'block';
-} 
+// Function to hide content display
+window.hideContent = function() {
+  const contentDisplay = document.getElementById('content-display');
+  contentDisplay.classList.add('hidden');
+}; 
