@@ -8,7 +8,7 @@ document.getElementById('repurpose-form').addEventListener('submit', async (e) =
   
   // Show status container and update message
   statusContainer.classList.remove('hidden');
-  status.textContent = 'Processing your video...';
+  status.textContent = 'Submitting your request...';
 
   // Validate and format YouTube URL
   let formattedUrl = url;
@@ -44,8 +44,8 @@ document.getElementById('repurpose-form').addEventListener('submit', async (e) =
       throw new Error(`HTTP error! status: ${response.status}`);
     }
     
-    // If we get here, the request was successful
-    status.textContent = 'Success! Your video is being processed.';
+    // If we get here, the request was accepted
+    status.textContent = 'Request accepted! Your video is being processed. This may take 1-2 minutes...';
     status.style.color = 'var(--success-color)';
     
     // Show result container after success

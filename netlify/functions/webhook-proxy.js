@@ -5,29 +5,34 @@ exports.handler = async (event) => {
   if (event.httpMethod !== 'POST') {
     return {
       statusCode: 405,
-      body: JSON.stringify({ error: 'Method not allowed' })
-    };
-  }
-
-  try {
-    // Forward the request to n8n
-    const response = await fetch('https://n8n-gauntlethq-u50028.vm.elestio.app/webhook/78797ede-a5e7-4ae9-8f7d-326f5260c135', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: event.body // Forward the body as-is
-    });
-
-    // Return response with CORS headers
-    return {
-      statusCode: response.status,
       headers: {
         'Access-Control-Allow-Origin': 'https://yt-repurpose.netlify.app',
         'Access-Control-Allow-Headers': 'Content-Type',
         'Access-Control-Allow-Methods': 'POST'
       },
-      body: JSON.stringify({ success: true })
+      body: JSON.stringify({ error: 'Method not allowed' })
+    };
+  }
+
+  try {
+    // Fire the request to n8n without waiting for completion
+    fetch('https://n8n-gauntlethq-u50028.vm.elestio.app/webhook/78797ede-a5e7-4ae9-8f7d-326f5260c135', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: event.body // Forward the body as-is
+    }).catch(error => console.error('n8n webhook error:', error));
+
+    // Immediately return success - don't wait for n8n
+    return {
+      statusCode: 200,
+      headers: {
+        'Access-Control-Allow-Origin': 'https://yt-repurpose.netlify.app',
+        'Access-Control-Allow-Headers': 'Content-Type',
+        'Access-Control-Allow-Methods': 'POST'
+      },
+      body: JSON.stringify({ success: true, message: 'Request accepted and being processed' })
     };
   } catch (error) {
     return {
