@@ -50,9 +50,57 @@ document.getElementById('repurpose-form').addEventListener('submit', async (e) =
     
     // Show result container after success
     document.getElementById('result-container').classList.remove('hidden');
+
+    // Start polling for results
+    pollForResults(formattedUrl);
   } catch (error) {
     console.error('Request failed:', error);
     status.textContent = 'Error: ' + error.message;
     status.style.color = 'var(--danger-color)';
   }
-}); 
+});
+
+// Function to poll for results
+async function pollForResults(videoUrl) {
+  const status = document.getElementById('status-message');
+  const maxAttempts = 24; // 2 minutes (5 second intervals)
+  let attempts = 0;
+
+  const pollInterval = setInterval(async () => {
+    attempts++;
+    
+    try {
+      const response = await fetch('/.netlify/functions/webhook-result', {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        
+        if (data.results) {
+          // Clear the interval
+          clearInterval(pollInterval);
+          
+          // Update status with success
+          status.textContent = 'Processing complete! Check your social media platforms.';
+          status.style.color = 'var(--success-color)';
+          
+          // Here you could also update the UI with specific results
+          // For example, show links to the generated content
+          console.log('Processing results:', data.results);
+        }
+      }
+    } catch (error) {
+      console.error('Error polling for results:', error);
+    }
+
+    // Stop polling after max attempts (2 minutes)
+    if (attempts >= maxAttempts) {
+      clearInterval(pollInterval);
+      status.textContent = 'Processing initiated. Check your social media platforms in a few minutes.';
+    }
+  }, 5000); // Poll every 5 seconds
+} 
