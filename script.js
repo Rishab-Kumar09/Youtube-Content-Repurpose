@@ -56,10 +56,84 @@ document.getElementById('repurpose-form').addEventListener('submit', async (e) =
     status.style.color = 'var(--success-color)';
     
     // Show result container after success
-    document.getElementById('result-container').classList.remove('hidden');
+    const resultContainer = document.getElementById('result-container');
+    resultContainer.classList.remove('hidden');
+
+    // Get the platforms container
+    const platformsContainer = document.querySelector('.social-platforms');
+    platformsContainer.innerHTML = ''; // Clear existing platforms
+
+    // Create platform buttons based on response data
+    if (data && data[0] && data[0].fields) {
+      const fields = data[0].fields;
+      
+      // Add Summary button if available
+      if (fields.Summary) {
+        addPlatformButton(platformsContainer, 'summary', '📝 Summary', fields.Summary);
+      }
+
+      // Add Twitter button if available
+      if (fields.Twitter) {
+        addPlatformButton(platformsContainer, 'twitter', '<i class="fab fa-twitter"></i> Twitter', fields.Twitter);
+      }
+
+      // Add LinkedIn button if available
+      if (fields.LinkedIn) {
+        addPlatformButton(platformsContainer, 'linkedin', '<i class="fab fa-linkedin"></i> LinkedIn', fields.LinkedIn);
+      }
+
+      // Add Gmail/Email button if available
+      if (fields.GMAIL) {
+        addPlatformButton(platformsContainer, 'gmail', '<i class="fas fa-envelope"></i> Email', fields.GMAIL);
+      }
+
+      // Add WordPress button if available
+      if (fields.Wordpress) {
+        addPlatformButton(platformsContainer, 'wordpress', '<i class="fab fa-wordpress"></i> WordPress', fields.Wordpress);
+      }
+
+      // Add Mailchimp button if available
+      if (fields.Mailchimp) {
+        addPlatformButton(platformsContainer, 'mailchimp', '<i class="fas fa-mail-bulk"></i> Mailchimp', fields.Mailchimp);
+      }
+    }
+
   } catch (error) {
     console.error('Request failed:', error);
     status.textContent = 'Error: ' + error.message;
     status.style.color = 'var(--danger-color)';
   }
-}); 
+});
+
+// Function to add a platform button
+function addPlatformButton(container, platform, label, content) {
+  const button = document.createElement('button');
+  button.className = 'platform-button';
+  button.innerHTML = label;
+  button.onclick = () => showContent(platform, content);
+  container.appendChild(button);
+}
+
+// Function to show content in a modal
+function showContent(platform, content) {
+  // Create or get existing modal
+  let modal = document.getElementById('content-modal');
+  if (!modal) {
+    modal = document.createElement('div');
+    modal.id = 'content-modal';
+    modal.className = 'modal';
+    document.body.appendChild(modal);
+  }
+
+  // Update modal content
+  modal.innerHTML = `
+    <div class="modal-content">
+      <span class="close-button" onclick="document.getElementById('content-modal').style.display='none'">&times;</span>
+      <h2>${platform.charAt(0).toUpperCase() + platform.slice(1)} Content</h2>
+      <div class="content-display">${content}</div>
+    </div>
+  `;
+
+  // Show modal
+  modal.style.display = 'block';
+} 
