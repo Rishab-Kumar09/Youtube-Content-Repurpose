@@ -14,12 +14,8 @@
 
 # Function settings
 [functions]
-  # Increase function timeout to 30 seconds
-  timeout = "30s"
-  # Include external node modules
-  external_node_modules = ["node-fetch"]
-  # Directory where functions are located
-  directory = "netlify/functions"
+node_bundler = "esbuild"
+external_node_modules = ["node-fetch"]
 
 # Headers for security and performance
 [[headers]]
@@ -84,11 +80,4 @@
   command = "echo 'Deploy preview build'"
   
 [context.branch-deploy]
-  command = "echo 'Branch deploy build'"
-
-# Plugin configuration (removed lighthouse plugin to avoid installation requirement)
-# [[plugins]]
-#   package = "netlify-plugin-lighthouse"
-#   
-#   [plugins.inputs]
-#     output_path = "reports/lighthouse.html" 
+  command = "echo 'Branch deploy build'" 
