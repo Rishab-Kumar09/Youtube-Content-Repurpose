@@ -5,10 +5,12 @@ document.getElementById('repurpose-form').addEventListener('submit', async (e) =
   const url = document.getElementById('youtube-url').value;
   const status = document.getElementById('status-message');
   const statusContainer = document.getElementById('status-container');
+  const resultContainer = document.getElementById('result-container');
   
   // Show status container and update message
   statusContainer.classList.remove('hidden');
   status.textContent = 'Submitting your request...';
+  resultContainer.classList.add('hidden');
 
   // Validate and format YouTube URL
   let formattedUrl = url;
@@ -36,71 +38,54 @@ document.getElementById('repurpose-form').addEventListener('submit', async (e) =
     // Log the request for debugging
     console.log('Sending request with options:', requestOptions);
     
-    // Make POST request through our Netlify proxy function
-    const response = await fetch('/.netlify/functions/webhook-proxy', requestOptions);
-    
-    // If the response is not ok, throw an error
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
-    
-    // If we get here, the request was accepted
-    status.textContent = 'Request accepted! Your video is being processed. This may take 1-2 minutes...';
-    status.style.color = 'var(--success-color)';
-    
-    // Show result container after success
-    document.getElementById('result-container').classList.remove('hidden');
+    // Make POST request through our Netlify proxy function with 2.5 minute timeout
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 150000); // 2.5 minutes in milliseconds
 
-    // Start polling for results
-    pollForResults(formattedUrl);
+    try {
+      const response = await fetch('/.netlify/functions/webhook-proxy', {
+        ...requestOptions,
+        signal: controller.signal
+      });
+      
+      clearTimeout(timeout);
+      
+      // Parse the response
+      const data = await response.json();
+      console.log('Response data:', data);
+
+      // If the response is not ok, throw an error
+      if (!response.ok) {
+        throw new Error(data.error || `HTTP error! status: ${response.status}`);
+      }
+      
+      // Show success message
+      status.textContent = 'Content repurposed successfully!';
+      status.style.color = 'var(--success-color)';
+      
+      // Show result container with completion message
+      resultContainer.classList.remove('hidden');
+      
+      // Update UI with any specific data from n8n
+      if (data.socialMediaLinks) {
+        // You could update specific platform links here
+        console.log('Social media links:', data.socialMediaLinks);
+      }
+    } catch (error) {
+      clearTimeout(timeout);
+      if (error.name === 'AbortError') {
+        throw new Error('Request timed out after 2.5 minutes. Your content is still being processed in the background.');
+      }
+      throw error;
+    }
   } catch (error) {
     console.error('Request failed:', error);
     status.textContent = 'Error: ' + error.message;
     status.style.color = 'var(--danger-color)';
-  }
-});
-
-// Function to poll for results
-async function pollForResults(videoUrl) {
-  const status = document.getElementById('status-message');
-  const maxAttempts = 24; // 2 minutes (5 second intervals)
-  let attempts = 0;
-
-  const pollInterval = setInterval(async () => {
-    attempts++;
     
-    try {
-      const response = await fetch('/.netlify/functions/webhook-result', {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json'
-        }
-      });
-
-      if (response.ok) {
-        const data = await response.json();
-        
-        if (data.results) {
-          // Clear the interval
-          clearInterval(pollInterval);
-          
-          // Update status with success
-          status.textContent = 'Processing complete! Check your social media platforms.';
-          status.style.color = 'var(--success-color)';
-          
-          // Here you could also update the UI with specific results
-          // For example, show links to the generated content
-          console.log('Processing results:', data.results);
-        }
-      }
-    } catch (error) {
-      console.error('Error polling for results:', error);
+    // If it's a timeout, still show the result container as processing continues in background
+    if (error.message.includes('timed out')) {
+      resultContainer.classList.remove('hidden');
     }
-
-    // Stop polling after max attempts (2 minutes)
-    if (attempts >= maxAttempts) {
-      clearInterval(pollInterval);
-      status.textContent = 'Processing initiated. Check your social media platforms in a few minutes.';
-    }
-  }, 5000); // Poll every 5 seconds
-} 
+  }
+}); 
