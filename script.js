@@ -26,8 +26,7 @@ document.getElementById('repurpose-form').addEventListener('submit', async (e) =
     const requestOptions = {
       method: 'POST',
       headers: {
-        'Content-Type': 'application/json',
-        'Accept': '*/*'
+        'Content-Type': 'application/json'
       },
       body: JSON.stringify({
         URL: formattedUrl
@@ -37,11 +36,10 @@ document.getElementById('repurpose-form').addEventListener('submit', async (e) =
     // Log the request for debugging
     console.log('Sending request with options:', requestOptions);
     
-    // Make POST request to n8n webhook
-    const response = await fetch('https://n8n-gauntlethq-u50028.vm.elestio.app/webhook/78797ede-a5e7-4ae9-8f7d-326f5260c135', requestOptions);
+    // Make POST request through our Netlify proxy function
+    const response = await fetch('/.netlify/functions/webhook-proxy', requestOptions);
 
     console.log('Response status:', response.status);
-    console.log('Response headers:', response.headers);
 
     if (!response.ok) {
       const errorText = await response.text();

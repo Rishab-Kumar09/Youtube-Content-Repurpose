@@ -1,28 +1,45 @@
-const axios = require('axios');
+const fetch = require('node-fetch');
 
 exports.handler = async (event) => {
-  const youtubeUrl = event.queryStringParameters?.URL;
-  
-  if (!youtubeUrl) {
-    return { 
-      statusCode: 400, 
-      body: 'Missing URL parameter' 
+  // Only allow POST requests
+  if (event.httpMethod !== 'POST') {
+    return {
+      statusCode: 405,
+      body: JSON.stringify({ error: 'Method not allowed' })
     };
   }
 
-  // Format URL exactly as n8n expects it
-  const n8nUrl = new URL('https://n8n-gauntlethq-u50028.vm.elestio.app/webhook/78797ede-a5e7-4ae9-8f7d-326f5260c135');
-  n8nUrl.searchParams.set('item', JSON.stringify({
-    json: {
-      URL: youtubeUrl
-    }
-  }));
+  try {
+    // Forward the request to n8n
+    const response = await fetch('https://n8n-gauntlethq-u50028.vm.elestio.app/webhook/78797ede-a5e7-4ae9-8f7d-326f5260c135', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: event.body // Forward the body as-is
+    });
 
-  // Redirect to n8n webhook
-  return {
-    statusCode: 302,
-    headers: {
-      Location: n8nUrl.toString()
-    }
-  };
+    const data = await response.json();
+
+    // Return response with CORS headers
+    return {
+      statusCode: response.status,
+      headers: {
+        'Access-Control-Allow-Origin': 'https://yt-repurpose.netlify.app',
+        'Access-Control-Allow-Headers': 'Content-Type',
+        'Access-Control-Allow-Methods': 'POST'
+      },
+      body: JSON.stringify(data)
+    };
+  } catch (error) {
+    return {
+      statusCode: 500,
+      headers: {
+        'Access-Control-Allow-Origin': 'https://yt-repurpose.netlify.app',
+        'Access-Control-Allow-Headers': 'Content-Type',
+        'Access-Control-Allow-Methods': 'POST'
+      },
+      body: JSON.stringify({ error: error.message })
+    };
+  }
 }; 
