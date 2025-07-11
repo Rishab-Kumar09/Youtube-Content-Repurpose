@@ -52,77 +52,14 @@ document.getElementById('repurpose-form').addEventListener('submit', async (e) =
     const data = await response.json();
     console.log('Success response:', data);
     
-    // Get the first item from the response which contains our content
-    const content = data[0]?.fields || {};
+    status.textContent = 'Success! Your video is being processed.';
+    status.style.color = 'var(--success-color)';
     
-    // Update result container with dynamic content
-    const resultContainer = document.getElementById('result-container');
-    resultContainer.innerHTML = `
-      <div class="result-header">
-        <i class="fas fa-check-circle"></i>
-        <h3>Content Processing Complete!</h3>
-      </div>
-      <div class="result-content">
-        <p>Your YouTube content has been successfully repurposed.</p>
-        <div class="platform-grid">
-          ${content.Twitter ? `
-            <button class="platform-button" onclick="showContent('twitter', ${JSON.stringify(content.Twitter)})">
-              <i class="fab fa-twitter"></i>
-              <span>Twitter</span>
-            </button>
-          ` : ''}
-          ${content.LinkedIn ? `
-            <button class="platform-button" onclick="showContent('linkedin', ${JSON.stringify(content.LinkedIn)})">
-              <i class="fab fa-linkedin"></i>
-              <span>LinkedIn</span>
-            </button>
-          ` : ''}
-          ${content.Summary ? `
-            <button class="platform-button" onclick="showContent('summary', ${JSON.stringify(content.Summary)})">
-              <i class="fas fa-file-alt"></i>
-              <span>Summary</span>
-            </button>
-          ` : ''}
-        </div>
-        <div id="content-display" class="content-display hidden">
-          <div class="content-header">
-            <span id="content-platform"></span>
-            <button onclick="hideContent()" class="close-button">
-              <i class="fas fa-times"></i>
-            </button>
-          </div>
-          <div id="content-text" class="content-text"></div>
-        </div>
-      </div>
-    `;
-    resultContainer.classList.remove('hidden');
+    // Show result container after success
+    document.getElementById('result-container').classList.remove('hidden');
   } catch (error) {
     console.error('Request failed:', error);
     status.textContent = 'Error: ' + error.message;
     status.style.color = 'var(--danger-color)';
   }
-});
-
-// Function to show content when a platform button is clicked
-window.showContent = function(platform, content) {
-  const contentDisplay = document.getElementById('content-display');
-  const contentPlatform = document.getElementById('content-platform');
-  const contentText = document.getElementById('content-text');
-  
-  // Set platform name and icon
-  const platformIcons = {
-    twitter: 'fab fa-twitter',
-    linkedin: 'fab fa-linkedin',
-    summary: 'fas fa-file-alt'
-  };
-  
-  contentPlatform.innerHTML = `<i class="${platformIcons[platform]}"></i> ${platform.charAt(0).toUpperCase() + platform.slice(1)}`;
-  contentText.textContent = content;
-  contentDisplay.classList.remove('hidden');
-};
-
-// Function to hide content display
-window.hideContent = function() {
-  const contentDisplay = document.getElementById('content-display');
-  contentDisplay.classList.add('hidden');
-}; 
+}); 
