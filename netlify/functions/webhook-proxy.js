@@ -19,8 +19,6 @@ exports.handler = async (event) => {
       body: event.body // Forward the body as-is
     });
 
-    const data = await response.json();
-
     // Return response with CORS headers
     return {
       statusCode: response.status,
@@ -29,7 +27,7 @@ exports.handler = async (event) => {
         'Access-Control-Allow-Headers': 'Content-Type',
         'Access-Control-Allow-Methods': 'POST'
       },
-      body: JSON.stringify(data)
+      body: JSON.stringify({ success: true })
     };
   } catch (error) {
     return {

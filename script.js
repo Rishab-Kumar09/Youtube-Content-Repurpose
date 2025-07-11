@@ -38,18 +38,13 @@ document.getElementById('repurpose-form').addEventListener('submit', async (e) =
     
     // Make POST request through our Netlify proxy function
     const response = await fetch('/.netlify/functions/webhook-proxy', requestOptions);
-
-    console.log('Response status:', response.status);
-
-    if (!response.ok) {
-      const errorText = await response.text();
-      console.error('Error response:', errorText);
-      throw new Error(`HTTP error! status: ${response.status} - ${errorText}`);
-    }
-
-    const data = await response.json();
-    console.log('Success response:', data);
     
+    // If the response is not ok, throw an error
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    
+    // If we get here, the request was successful
     status.textContent = 'Success! Your video is being processed.';
     status.style.color = 'var(--success-color)';
     
