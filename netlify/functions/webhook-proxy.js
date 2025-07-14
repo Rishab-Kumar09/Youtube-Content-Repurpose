@@ -41,15 +41,14 @@ exports.handler = async (event) => {
 
       clearTimeout(timeout);
 
-      // Get the response data
-      const data = await response.json();
-      console.log('n8n response:', data);
-
-      // Return the response with CORS headers
+      // Return success response without trying to parse n8n response
       return {
-        statusCode: response.status,
+        statusCode: response.ok ? 200 : response.status,
         headers: corsHeaders,
-        body: JSON.stringify(data)
+        body: JSON.stringify({ 
+          success: response.ok,
+          message: response.ok ? 'Request processed successfully' : 'Failed to process request'
+        })
       };
     } catch (error) {
       clearTimeout(timeout);

@@ -9,7 +9,7 @@ document.getElementById('repurpose-form').addEventListener('submit', async (e) =
   
   // Show status container and update message
   statusContainer.classList.remove('hidden');
-  status.textContent = 'Submitting your request...';
+  status.textContent = 'Processing your video...';
   resultContainer.classList.add('hidden');
 
   // Validate and format YouTube URL
@@ -49,14 +49,10 @@ document.getElementById('repurpose-form').addEventListener('submit', async (e) =
       });
       
       clearTimeout(timeout);
-      
-      // Parse the response
-      const data = await response.json();
-      console.log('Response data:', data);
 
       // If the response is not ok, throw an error
       if (!response.ok) {
-        throw new Error(data.error || `HTTP error! status: ${response.status}`);
+        throw new Error(`HTTP error! status: ${response.status}`);
       }
       
       // Show success message
@@ -66,11 +62,6 @@ document.getElementById('repurpose-form').addEventListener('submit', async (e) =
       // Show result container with completion message
       resultContainer.classList.remove('hidden');
       
-      // Update UI with any specific data from n8n
-      if (data.socialMediaLinks) {
-        // You could update specific platform links here
-        console.log('Social media links:', data.socialMediaLinks);
-      }
     } catch (error) {
       clearTimeout(timeout);
       if (error.name === 'AbortError') {
